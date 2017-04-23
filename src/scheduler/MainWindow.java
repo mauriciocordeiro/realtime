@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -103,15 +104,15 @@ public class MainWindow extends JFrame {
 		contentPane.add(separator);
 		
 		JRadioButton rdbRm = new JRadioButton("RM");
-		rdbRm.setBounds(10, 159, 55, 23);
+		rdbRm.setBounds(20, 161, 55, 23);
 		contentPane.add(rdbRm);
 		
 		JRadioButton rdbEdf = new JRadioButton("EDF");
-		rdbEdf.setBounds(67, 159, 55, 23);
+		rdbEdf.setBounds(77, 161, 55, 23);
 		contentPane.add(rdbEdf);
 		
 		JRadioButton rdbLst = new JRadioButton("LST");
-		rdbLst.setBounds(124, 158, 55, 23);
+		rdbLst.setBounds(134, 160, 55, 23);
 		contentPane.add(rdbLst);
 		
 		ButtonGroup rbGroup = new ButtonGroup();
@@ -120,7 +121,7 @@ public class MainWindow extends JFrame {
 		rbGroup.add(rdbLst);
 		
 		JScrollPane scrollPane = new JScrollPane(tbTasks);
-		scrollPane.setBounds(10, 36, 518, 100);
+		scrollPane.setBounds(10, 30, 518, 106);
 		contentPane.add(scrollPane);
 		
 		JButton btnTest = new JButton("Test");
@@ -129,8 +130,18 @@ public class MainWindow extends JFrame {
 				btnTestOnClick(arg0);
 			}
 		});
-		btnTest.setBounds(193, 159, 89, 23);
+		btnTest.setBounds(203, 161, 89, 23);
 		contentPane.add(btnTest);
+		
+		JButton btnRandom = new JButton("}{");
+		btnRandom.setToolTipText("Generate tasks");
+		btnRandom.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				btnRandomOnClick(arg0);
+			}
+		});
+		btnRandom.setBounds(538, 100, 46, 23);
+		contentPane.add(btnRandom);
 	}
 	
 	public void addTaskOnClick(ActionEvent e) {
@@ -151,6 +162,19 @@ public class MainWindow extends JFrame {
 		}
 		
 		taskPool.remove(tbTasks.getSelectedRow());
+		reloadTable();
+	}
+	
+	public void btnRandomOnClick(ActionEvent e) {
+		int size = taskPool.size();
+		for(int i=size; i<TOTAL_TASKS; i++) {
+			Task t = new Task(i, 
+					Long.parseLong((new Random().nextInt(59)+1)+""), 
+					Long.parseLong((new Random().nextInt(59)+1)+""), 
+					Long.parseLong((new Random().nextInt(59)+1)+""));
+			
+			taskPool.add(t);
+		}
 		reloadTable();
 	}
 	
