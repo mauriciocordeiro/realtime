@@ -56,7 +56,7 @@ public class Task extends Thread {
 
 	@Override
 	public void run() {
-		
+				
 		long startTime = new GregorianCalendar().getTimeInMillis();
 		long now = 0;
 		do {

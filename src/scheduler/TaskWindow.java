@@ -77,14 +77,14 @@ public class TaskWindow extends JDialog {
 		btnOk.setBounds(81, 155, 89, 23);
 		contentPane.add(btnOk);
 		
-		JLabel lblTask = new JLabel("Task "+Integer.toString(pool.size()));
+		JLabel lblTask = new JLabel("Task "+Integer.toString(pool.getLastId()+1));
 		lblTask.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTask.setBounds(10, 11, 160, 14);
 		contentPane.add(lblTask);
 	}
 	
 	private void addTask(Long computation, Long deadline, Long period) {
-		pool.add(new Task(pool.size(), computation, deadline, period));
+		pool.add(new Task(pool.getLastId()+1, computation, deadline, period));
 		parent.reloadTable();
 		this.setVisible(false);
 	}

@@ -29,6 +29,9 @@ public class MainWindow extends JFrame {
 
 	private JPanel contentPane;
 	private JTable tbTasks;
+	private JRadioButton rdbRm;
+	private JRadioButton rdbEdf;
+	private JRadioButton rdbLst;
 
 	/**
 	 * Launch the application.
@@ -50,7 +53,10 @@ public class MainWindow extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings("serial")
 	public MainWindow() {
+		
+		
 		
 		setTitle("Scheduler");
 		setResizable(false);
@@ -67,13 +73,15 @@ public class MainWindow extends JFrame {
 		
 		tbTasks = new JTable();
 		tbTasks.setBorder(new LineBorder(new Color(0, 0, 0)));
-		tbTasks.setModel(new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Id.", "Tempo de Computa\u00E7\u00E3o", "Deadline", "Per\u00EDodo"
-			}
-		));
+		tbTasks.setModel(new DefaultTableModel(new Object[][] {},
+				new String[] {"Id.", "Tempo de Computa\u00E7\u00E3o", "Deadline", "Per\u00EDodo"}
+			) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+			       //all cells false
+			       return false;
+			    }
+			});
 		tbTasks.setBounds(10, 36, 518, 100);
 		tbTasks.getColumnModel().getColumn(0).setPreferredWidth(20);
 		contentPane.add(tbTasks);
@@ -103,15 +111,15 @@ public class MainWindow extends JFrame {
 		separator.setBounds(10, 147, 574, 4);
 		contentPane.add(separator);
 		
-		JRadioButton rdbRm = new JRadioButton("RM");
+		rdbRm = new JRadioButton("RM");
 		rdbRm.setBounds(20, 161, 55, 23);
 		contentPane.add(rdbRm);
 		
-		JRadioButton rdbEdf = new JRadioButton("EDF");
+		rdbEdf = new JRadioButton("EDF");
 		rdbEdf.setBounds(77, 161, 55, 23);
 		contentPane.add(rdbEdf);
 		
-		JRadioButton rdbLst = new JRadioButton("LST");
+		rdbLst = new JRadioButton("LST");
 		rdbLst.setBounds(134, 160, 55, 23);
 		contentPane.add(rdbLst);
 		
@@ -124,7 +132,7 @@ public class MainWindow extends JFrame {
 		scrollPane.setBounds(10, 30, 518, 106);
 		contentPane.add(scrollPane);
 		
-		JButton btnTest = new JButton("Test");
+		JButton btnTest = new JButton("Run");
 		btnTest.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				btnTestOnClick(arg0);
@@ -168,7 +176,7 @@ public class MainWindow extends JFrame {
 	public void btnRandomOnClick(ActionEvent e) {
 		int size = taskPool.size();
 		for(int i=size; i<TOTAL_TASKS; i++) {
-			Task t = new Task(i, 
+			Task t = new Task(taskPool.getLastId()+1, 
 					Long.parseLong((new Random().nextInt(59)+1)+""), 
 					Long.parseLong((new Random().nextInt(59)+1)+""), 
 					Long.parseLong((new Random().nextInt(59)+1)+""));
@@ -179,6 +187,28 @@ public class MainWindow extends JFrame {
 	}
 	
 	public void btnTestOnClick(ActionEvent e) {
+		
+		if(taskPool.size()<TOTAL_TASKS) {
+			JOptionPane.showMessageDialog(this, "Número insuficiente de tarefas.", "Alerta", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		if(rdbRm.isSelected()) {
+			
+			
+			
+		} else if(rdbEdf.isSelected()) {
+			
+			
+			
+		} else if(rdbLst.isSelected()) {
+			
+			
+			
+		} else {
+			JOptionPane.showMessageDialog(this, "Nenhuma escalonador selecionado.", "Alerta", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		
 	}
 	
