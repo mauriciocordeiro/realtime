@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -11,17 +12,26 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.SwingConstants;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Window.Type;
 
-public class TaskWindow extends JFrame {
+public class TaskWindow extends JDialog {
 	
 	private TaskPool pool;
+	private MainWindow parent;
 
 	private JPanel contentPane;
 
 	/**
 	 * Create the frame.
 	 */
-	public TaskWindow(TaskPool pool) {
+	public TaskWindow(MainWindow parent, TaskPool pool) {
+		
+		this.parent = parent;
+		this.pool = pool;
+		
+		this.setModal(true);
+		
 		setResizable(false);
 		setAlwaysOnTop(true);
 		
@@ -75,7 +85,7 @@ public class TaskWindow extends JFrame {
 	
 	private void addTask(Long computation, Long deadline, Long period) {
 		pool.add(new Task(pool.size(), computation, deadline, period));
-		
+		parent.reloadTable();
 		this.setVisible(false);
 	}
 }
