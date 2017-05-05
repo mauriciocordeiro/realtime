@@ -1,6 +1,7 @@
 package scheduler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class TaskPool extends ArrayList<Task> {
  
@@ -14,6 +15,12 @@ public class TaskPool extends ArrayList<Task> {
 			return last.getTaskId();
 		}
 	}
+	
+	public void sort() {
+		Collections.sort(this);
+	}
+	
+	//TODO: task com menor periodo
 
 }
  

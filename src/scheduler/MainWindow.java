@@ -21,6 +21,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.IntervalCategoryDataset;
+import org.jfree.data.gantt.TaskSeries;
+import org.jfree.data.gantt.TaskSeriesCollection;
+import org.jfree.data.time.SimpleTimePeriod;
+
 public class MainWindow extends JFrame {
 	
 	public static final int TOTAL_TASKS = 5;
@@ -32,6 +40,8 @@ public class MainWindow extends JFrame {
 	private JRadioButton rdbRm;
 	private JRadioButton rdbEdf;
 	private JRadioButton rdbLst;
+	
+	private ChartPanel ganttPanel;
 
 	/**
 	 * Launch the application.
@@ -150,6 +160,8 @@ public class MainWindow extends JFrame {
 		});
 		btnRandom.setBounds(538, 100, 46, 23);
 		contentPane.add(btnRandom);
+		
+		//ganttPanel.setBounds(10, 191, 574, 265);
 	}
 	
 	public void addTaskOnClick(ActionEvent e) {
@@ -176,10 +188,15 @@ public class MainWindow extends JFrame {
 	public void btnRandomOnClick(ActionEvent e) {
 		int size = taskPool.size();
 		for(int i=size; i<TOTAL_TASKS; i++) {
+			int deadline = new Random().nextInt(9)+1;
+			int computation = new Random().nextInt(deadline);
+			computation = computation==0 ? computation+1 : computation;
+			int period = new Random().nextInt(9)+1;
+			
 			Task t = new Task(taskPool.getLastId()+1, 
-					Long.parseLong((new Random().nextInt(59)+1)+""), 
-					Long.parseLong((new Random().nextInt(59)+1)+""), 
-					Long.parseLong((new Random().nextInt(59)+1)+""));
+					Long.parseLong(computation+""), 
+					Long.parseLong(deadline+""), 
+					Long.parseLong(period+""));
 			
 			taskPool.add(t);
 		}
@@ -195,7 +212,8 @@ public class MainWindow extends JFrame {
 		
 		if(rdbRm.isSelected()) {
 			
-			
+			RM s = new RM(taskPool, this);
+			plot(s.schedule());
 			
 		} else if(rdbEdf.isSelected()) {
 			
@@ -209,6 +227,44 @@ public class MainWindow extends JFrame {
 			JOptionPane.showMessageDialog(this, "Nenhuma escalonador selecionado.", "Alerta", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+		
+	}
+	
+	public void plot(TaskPool tasks) {
+		TaskSeriesCollection collection = null;
+		
+		long start = 0;
+		long end = 0;
+		
+		for (Task task : tasks) {
+			
+			System.out.print(task.getTaskId());
+			
+			final TaskSeries s1 = new TaskSeries("Tasks");
+	        s1.add(new org.jfree.data.gantt.Task(task.getTaskId().toString(),
+	               new SimpleTimePeriod(start, end)));
+
+	        collection = new TaskSeriesCollection();
+	        collection.add(s1);
+	        
+	        start++;
+	        end++;
+		}
+		
+		final JFreeChart chart = ChartFactory.createGanttChart(
+	            "Gantt Chart Demo",  // chart title
+	            "Task",              // domain axis label
+	            "Date",              // range axis label
+	            (IntervalCategoryDataset)collection,             // data
+	            true,                // include legend
+	            true,                // tooltips
+	            false                // urls
+	        );
+
+        // add the chart to a panel...
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setBounds(10, 191, 574, 265);
+        setContentPane(chartPanel);
 		
 	}
 	
@@ -230,4 +286,16 @@ public class MainWindow extends JFrame {
 			}			
 		}
 	}
+	
+	public static IntervalCategoryDataset createDataset() {
+
+        final TaskSeries s1 = new TaskSeries("Scheduled");
+        s1.add(new org.jfree.data.gantt.Task("Write Proposal",
+               new SimpleTimePeriod(0,0)));
+
+        final TaskSeriesCollection collection = new TaskSeriesCollection();
+        collection.add(s1);
+
+        return collection;
+    }
 }
