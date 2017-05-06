@@ -88,7 +88,7 @@ public class RM extends Scheduler {
 			}
 			else { //next has priority over current
 				System.out.println("clk: "+clk+" -> "+nextTask.getTaskId()+" HAS PRIORITY OVER "+currentTask.getTaskId());
-				if(currentTask.getRelativeDeadline() > clk) { //current hits deadline
+				if(currentTask.getRelativeDeadline() == clk) { //current hits deadline
 					System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
 					isSchedulable = false;
 					break;

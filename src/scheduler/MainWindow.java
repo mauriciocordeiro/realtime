@@ -279,7 +279,7 @@ public class MainWindow extends JFrame {
 		}
 		
 		final JFreeChart chart = ChartFactory.createGanttChart(
-	            schedulerName,  // chart title
+	            null,  // chart title
 	            "Tasks",              // domain axis label
 	            "Period",              // range axis label
 	            (IntervalCategoryDataset)collection,             // data
