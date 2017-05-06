@@ -33,7 +33,6 @@ public class TaskWindow extends JDialog {
 		this.setModal(true);
 		
 		setResizable(false);
-		setAlwaysOnTop(true);
 		
 		setBounds(100, 100, 190, 220);
 		contentPane = new JPanel();
@@ -46,7 +45,7 @@ public class TaskWindow extends JDialog {
 		contentPane.add(lblTempoDeComputao);
 		
 		JSpinner spnComputation = new JSpinner();
-		spnComputation.setModel(new SpinnerNumberModel(new Long(1), new Long(1), new Long(60), new Long(1)));
+		spnComputation.setModel(new SpinnerNumberModel(new Long(1), new Long(1), new Long(500), new Long(1)));
 		spnComputation.setBounds(128, 57, 42, 20);
 		contentPane.add(spnComputation);
 		
@@ -55,7 +54,7 @@ public class TaskWindow extends JDialog {
 		contentPane.add(lblPerodo);
 		
 		JSpinner spnPeriod = new JSpinner();
-		spnPeriod.setModel(new SpinnerNumberModel(new Long(1), new Long(1), new Long(60), new Long(1)));
+		spnPeriod.setModel(new SpinnerNumberModel(new Long(1), new Long(1), new Long(500), new Long(1)));
 		spnPeriod.setBounds(128, 85, 42, 20);
 		contentPane.add(spnPeriod);
 		
@@ -64,7 +63,7 @@ public class TaskWindow extends JDialog {
 		contentPane.add(lblDeadline);
 		
 		JSpinner spnDeadline = new JSpinner();
-		spnDeadline.setModel(new SpinnerNumberModel(new Long(1), new Long(1), new Long(60), new Long(1)));
+		spnDeadline.setModel(new SpinnerNumberModel(new Long(1), new Long(1), new Long(500), new Long(1)));
 		spnDeadline.setBounds(128, 113, 42, 20);
 		contentPane.add(spnDeadline);
 		

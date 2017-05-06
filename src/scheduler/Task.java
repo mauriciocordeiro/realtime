@@ -86,5 +86,11 @@ public class Task extends Thread implements Comparable<Task> {
 			return 1;
 		return 0;
 	}
+	
+	@Override
+	public String toString() {
+		return "[id:"+getTaskId()+", period:"+getPeriod()+", computation:"+getComputation()+
+				", deadline:"+getDeadline()+", relative:"+getRelativeDeadline()+"]";
+	}
 
 }

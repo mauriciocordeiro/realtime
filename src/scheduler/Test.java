@@ -1,12 +1,13 @@
 package scheduler;
 
+import br.org.mac.midgard.util.Math;
+
 public class Test {
 
 	public static void main(String[] args) {
 	
-		RM rm = new RM();
+		System.out.println(Math.lcm(true, 5,10,15,20,35));
 		
-		System.out.println(rm.mmc(4,5,6));
 
 	}
 

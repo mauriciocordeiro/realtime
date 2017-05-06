@@ -22,17 +22,7 @@ public class RM extends Scheduler {
 	public void run() {
 		
 		//TODO: teste de escalonabilidade
-		Long u = new Long(0);
-		for (Task tsk : getTaskpool()) {
-			u += tsk.getComputation()/tsk.getPeriod();
-		}
 		
-		Long n = new Long(getTaskpool().size());
-		
-		if(u>(n*(Math.pow(2, (1/n)))-1)) {
-			JOptionPane.showMessageDialog(null, "Conjunto de tarefas não escalonável.", "Alerta", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
 		
 //		while(!getReadyQueue().isEmpty()) {
 //			
@@ -40,73 +30,84 @@ public class RM extends Scheduler {
 		System.out.println("Conjunto escalonável");
 	}
 	
+	/**
+	 * Gera a escala das tarefas.
+	 * 
+	 * @return
+	 */
 	public TaskPool schedule() {
 		
 		TaskPool result = new TaskPool();
+		String timeline = "";
+		String taskline = "";
 		
 		Task currentTask = null;
 		Task nextTask = null;
 		
-		boolean isSchedule = true;
-		boolean currentContinue = true;
+		boolean isSchedulable = true;
 		
-		//TODO: calcular mmc dos períodos e escalonar até o mmc
 		int[] periods = new int[getTaskpool().size()];
 		for (int i=0; i<periods.length; i++) {
-			periods[i] = getReadyQueue().get(i).getPeriod().intValue();
+			periods[i] = getTaskpool().get(i).getPeriod().intValue();
 		}
-		int endTime = 60;//mmc(periods);
+		int clk = 0;
+		int endTime = br.org.mac.midgard.util.Math.lcm(periods);
+		currentTask = dequeue();
 		
-		while(getTime().intValue() <= endTime) {
+		System.out.println("============================================================\n"+getReadyQueue());
+		
+		while(clk <= endTime) {
+//			System.out.println(getReadyQueue());
 			
-			if(getTime().intValue()==0) {
-				currentTask = getReadyQueue().remove(0);
-				
-			}
-			else {
-				
-				startNewTask(getTime().intValue());
-				
-				if(!currentContinue && getReadyQueue().size()>0) {
-					currentTask = getReadyQueue().remove(0);
-				}
-				if(getReadyQueue().size()>0) {
-					nextTask = getReadyQueue().remove(0);
-				}
-				
-				if(currentTask == null)
-					continue;
-				if(nextTask == null)
-					continue;
-					
-				if(currentTask.compareTo(nextTask)==1) {
-					if(currentTask.getRelativeDeadline() == getTime().intValue()) {
-						currentTask = nextTask;	
-						currentContinue = true;
-					}
-					else if(currentTask.getRelativeDeadline() < getTime().intValue()) {
-						addReady(currentTask, true);
-						currentTask = nextTask;	
-						currentContinue = true;
-					}
-					else if(currentTask.getRelativeDeadline() > getTime().intValue()) {
-						isSchedule = false;
-						currentContinue = false;
-						break;
-					}
-					
-				}
-				else {
-					currentContinue = true;
-					addReady(nextTask, true);
-				}
-			}
+			clk++;
+			startNewTask(clk);
+			nextTask = dequeue();
 			
 			result.add(currentTask);
-			setTime(getTime()+1);
+			timeline += clk + "|";
+			taskline += currentTask.getTaskId() + "|";
+			
+			//skip if there isn't a new task
+			if(nextTask==null)
+				continue;
+			
+//			System.out.println("current: "+currentTask);
+//			System.out.println("next: "+nextTask);
+//			System.out.println();
+			
+			currentTask.setComputation(currentTask.getComputation()-1);
+			if(currentTask.getComputation()==0) {
+				System.out.println("clk: "+clk+" -> "+currentTask.getTaskId()+" FINNISH");
+				currentTask = nextTask;
+				continue;
+			}
+			
+			if(currentTask.compareTo(nextTask)<=0) { //current has priority over next
+				System.out.println("clk: "+clk+" -> "+currentTask.getTaskId()+" HAS PRIORITY OVER "+nextTask.getTaskId());
+				continue;
+			}
+			else { //next has priority over current
+				System.out.println("clk: "+clk+" -> "+nextTask.getTaskId()+" HAS PRIORITY OVER "+currentTask.getTaskId());
+				if(currentTask.getRelativeDeadline() > clk) { //current hits deadline
+					System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
+					isSchedulable = false;
+					break;
+				}
+				else if(currentTask.getRelativeDeadline() < clk) { 
+					System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HAS BEEN PREEMPTED");
+					enqueue(currentTask);
+				}
+				
+				currentTask = nextTask; // new is the new current
+			}
 		}
 		
+		if(!isSchedulable) 
+			JOptionPane.showMessageDialog(getWindow(), "Conjunto de tarefas não escalonável", "Alerta", JOptionPane.WARNING_MESSAGE);
+		else
+			JOptionPane.showMessageDialog(getWindow(), "Conjunto de tarefas escalonável", "Informação", JOptionPane.INFORMATION_MESSAGE);
 		
+		System.out.println("result:\n"+taskline);
 		return result;
 		
 	}
@@ -116,60 +117,44 @@ public class RM extends Scheduler {
 			if((time % task.getPeriod().intValue())==0) {
 				Task newTask = task.clone();
 				newTask.setRelativeDeadline(time+task.getDeadline());
-				addReady(newTask, true);
+				System.out.println("\t\tclk: "+time+"-> "+newTask.getTaskId()+" enqueued.");
+				addReady(newTask);
 			}
 		}
 	}
 	
-	public int mmc(int... numbers) {
-		int mmc = 1;
-		
-		int factor = 1;
-		
-		while(hasMore(numbers)) {
-			for (int i=0; i<numbers.length; i++) {
-				if(isPrime(factor)) {
-					if(numbers[i] % factor == 0) {
-						numbers[i] = numbers[i]/factor;
-						System.out.println("i /= factor = "+numbers[i]);
-						mmc = mmc*factor;
-					}
-				}
-				else {
-					continue;
-				}
-			}
-			factor++;
-		}	
-		
-		return mmc;
-		
-	}
-	
-	private boolean hasMore(int[] numbers) {
-		boolean hasMore = false;
-		
-		for (int i=0; i<numbers.length; i++) {
-			if(numbers[i] > 1) {
-				hasMore = true;
-				break;
+	private Task getNewTask(int time) {
+		Task newTask = null;
+		for (Task task : getTaskpool()) {
+			if((time % task.getPeriod().intValue())==0) {
+				if((newTask==null) || (newTask.compareTo(task)==1))
+					newTask = task.clone();
+				newTask.setRelativeDeadline(time+task.getDeadline());
 			}
 		}
-		return hasMore;
+		return newTask;
 	}
 	
-	private boolean isPrime(int number) {
-		int count = 0; 
-		
-		for(int i=1; i<=number; i++) {
-			if(number%i==0) {
-				count++;
-			}
+	public boolean isValidScale() {
+		Long u = new Long(0);
+		for (Task tsk : getTaskpool()) {
+			u += tsk.getComputation()/tsk.getPeriod();
 		}
 		
-		return count<=2;
+		Long n = new Long(getTaskpool().size());
+		
+		if(u>(n*(Math.pow(2, (1/n)))-1)) {
+			return false;
+		}
+		return true;
 	}
 	
+	private Task dequeue() {
+		return getReadyQueue().removeLowestPeriod();
+	}
 	
+	private void enqueue(Task task) {
+		getReadyQueue().add(task);
+	}
 
 }

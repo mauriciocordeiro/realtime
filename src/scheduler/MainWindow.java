@@ -32,6 +32,9 @@ import org.jfree.data.time.SimpleTimePeriod;
 public class MainWindow extends JFrame {
 	
 	public static final int TOTAL_TASKS = 5;
+	public static final long INTERVAL = 5000;
+	
+	public static Color[] colors = {Color.BLUE, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.GREEN};
 	
 	public TaskPool taskPool = new TaskPool();
 
@@ -42,6 +45,8 @@ public class MainWindow extends JFrame {
 	private JRadioButton rdbLst;
 	
 	private ChartPanel ganttPanel;
+	
+	private String schedulerName;
 
 	/**
 	 * Launch the application.
@@ -71,7 +76,7 @@ public class MainWindow extends JFrame {
 		setTitle("Scheduler");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 500);
+		setBounds(100, 100, 800, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -118,7 +123,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(btnDelTask);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(10, 147, 574, 4);
+		separator.setBounds(10, 147, 774, 4);
 		contentPane.add(separator);
 		
 		rdbRm = new JRadioButton("RM");
@@ -161,6 +166,12 @@ public class MainWindow extends JFrame {
 		btnRandom.setBounds(538, 100, 46, 23);
 		contentPane.add(btnRandom);
 		
+//		JPanel graphicPanel = new JPanel();
+//		graphicPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+//		graphicPanel.setBackground(Color.WHITE);
+//		graphicPanel.setBounds(10, 191, 774, 269);
+//		contentPane.add(graphicPanel);
+		
 		//ganttPanel.setBounds(10, 191, 574, 265);
 	}
 	
@@ -186,12 +197,15 @@ public class MainWindow extends JFrame {
 	}
 	
 	public void btnRandomOnClick(ActionEvent e) {
+		if(taskPool.size()==TOTAL_TASKS)
+			taskPool = new TaskPool();
+		
 		int size = taskPool.size();
 		for(int i=size; i<TOTAL_TASKS; i++) {
 			int deadline = new Random().nextInt(9)+1;
-			int computation = new Random().nextInt(deadline);
-			computation = computation==0 ? computation+1 : computation;
 			int period = new Random().nextInt(9)+1;
+			int computation = new Random().nextInt(period);
+			computation = computation==0 ? computation+1 : computation;
 			
 			Task t = new Task(taskPool.getLastId()+1, 
 					Long.parseLong(computation+""), 
@@ -205,22 +219,29 @@ public class MainWindow extends JFrame {
 	
 	public void btnTestOnClick(ActionEvent e) {
 		
-		if(taskPool.size()<TOTAL_TASKS) {
+		if(taskPool.size()<1) {
 			JOptionPane.showMessageDialog(this, "Número insuficiente de tarefas.", "Alerta", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		if(rdbRm.isSelected()) {
+			schedulerName = "Rate Monotonic";
+			
+			JOptionPane.showMessageDialog(this, "No escalonamento RM, o deadline é igual ao período.", "Info", JOptionPane.INFORMATION_MESSAGE);
+			for (Task task : taskPool)
+				task.setDeadline(task.getPeriod());
+			reloadTable();
 			
 			RM s = new RM(taskPool, this);
 			plot(s.schedule());
+//			s.schedule();
 			
 		} else if(rdbEdf.isSelected()) {
-			
+			schedulerName = "Earliest Deadline First";
 			
 			
 		} else if(rdbLst.isSelected()) {
-			
+			schedulerName = "LST";
 			
 			
 		} else {
@@ -231,30 +252,36 @@ public class MainWindow extends JFrame {
 	}
 	
 	public void plot(TaskPool tasks) {
-		TaskSeriesCollection collection = null;
+		String timeline = "";
+		
+		TaskSeriesCollection collection = new TaskSeriesCollection();
+		TaskSeries[] series = new TaskSeries[TOTAL_TASKS];
 		
 		long start = 0;
-		long end = 0;
+		long end = INTERVAL;
+		
+		for (Task task : tasks) {
+			series[task.getTaskId()] = new TaskSeries(task.getTaskId().toString());
+			timeline += task.getTaskId();
+		}
 		
 		for (Task task : tasks) {
 			
-			System.out.print(task.getTaskId());
-			
-			final TaskSeries s1 = new TaskSeries("Tasks");
-	        s1.add(new org.jfree.data.gantt.Task(task.getTaskId().toString(),
+			series[task.getTaskId()].add(new org.jfree.data.gantt.Task(task.getTaskId().toString(),
 	               new SimpleTimePeriod(start, end)));
-
-	        collection = new TaskSeriesCollection();
-	        collection.add(s1);
-	        
-	        start++;
-	        end++;
+	        start+=INTERVAL;
+	        end+=INTERVAL;
+		}
+		
+		for (TaskSeries taskSeries : series) {
+			if(taskSeries!=null)
+				collection.add(taskSeries);
 		}
 		
 		final JFreeChart chart = ChartFactory.createGanttChart(
-	            "Gantt Chart Demo",  // chart title
-	            "Task",              // domain axis label
-	            "Date",              // range axis label
+	            schedulerName,  // chart title
+	            "Tasks",              // domain axis label
+	            "Period",              // range axis label
 	            (IntervalCategoryDataset)collection,             // data
 	            true,                // include legend
 	            true,                // tooltips
@@ -263,11 +290,12 @@ public class MainWindow extends JFrame {
 
         // add the chart to a panel...
         final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBounds(10, 191, 574, 265);
+        chartPanel.setBounds(10, 191, 774, 269);
         setContentPane(chartPanel);
 		
+        JOptionPane.showMessageDialog(null, timeline, "Shedule", JOptionPane.PLAIN_MESSAGE);
 	}
-	
+		
 	public void reloadTable() {
 		clearTable();
 		for (Task task : taskPool) {

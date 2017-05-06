@@ -26,6 +26,10 @@ public class Scheduler extends Thread {
 		if(startActivator)
 			activator.start();
 	}
+	
+	public Scheduler(TaskPool taskpool, MainWindow window) {
+		new Scheduler(taskpool, window, true);
+	}
 
 	public Scheduler() {
 		super();
