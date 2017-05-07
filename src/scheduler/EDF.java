@@ -123,6 +123,7 @@ public class EDF extends Scheduler {
 				newTask.setRelativeDeadline(clk+task.getDeadline());
 				System.out.println("\t\tclk: "+clk+"-> "+newTask.getTaskId()+" enqueued.");
 				addReady(newTask);
+				getWindow().chart.enqueueTask(newTask);
 			}
 		}
 	}

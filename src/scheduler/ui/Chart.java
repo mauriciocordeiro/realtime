@@ -45,6 +45,7 @@ public class Chart extends JPanel {
 			t.setBorder(new LineBorder(new Color(0, 0, 0)));
 			t.setBackground(colors[task.getTaskId()]);
 			t.setBounds(pointer, getY(), SIZE, SIZE);
+			
 			pointer += SIZE;
 			add(t);
 		}
@@ -61,6 +62,38 @@ public class Chart extends JPanel {
 		add(t);
 		
 		repaint();
+	}
+	
+	public void addDeadline(Task task) {
+		JPanel t = new JPanel();
+		t.setBorder(new LineBorder(new Color(255, 0, 0)));
+		t.setBounds(pointer-1, getY()-(SIZE*2), 1, SIZE*2);
+		
+		JLabel l = new JLabel(task.getTaskId()+"");
+		l.setBounds(pointer, getY()-(SIZE*2)-7, 14, 14);
+		
+		pointer++;
+		
+		add(t);
+		add(l);
+		repaint();
+	}
+	
+	public void enqueueTask(Task task) {
+		
+		JPanel t = new JPanel();
+		t.setBorder(new LineBorder(new Color(0, 0, 255)));
+		t.setBounds(pointer-1, getY()+(SIZE*2), 1, SIZE*2);
+		
+		JLabel l = new JLabel(task.getTaskId()+"");
+		l.setBounds(pointer, getY()+(SIZE*2)+7, 14, 14);
+		
+		pointer++;
+		
+		add(t);
+		add(l);
+		repaint();
+		
 	}
 
 }

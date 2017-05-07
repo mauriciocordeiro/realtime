@@ -109,6 +109,7 @@ public class Scheduler extends Thread {
 			if(clk >= task.getRelativeDeadline().intValue()) {
 				isValid = false;
 				System.err.println("\t"+"clk: "+clk+" -> "+task.getTaskId()+" HITS DEADLINE");
+				window.chart.addDeadline(task);
 				break;
 			}
 		}

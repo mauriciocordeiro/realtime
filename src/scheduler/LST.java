@@ -117,6 +117,7 @@ public class LST extends Scheduler {
 				newTask.setRelativeDeadline(time+task.getDeadline());
 				System.out.println("\t\tclk: "+time+"-> "+newTask.getTaskId()+" enqueued.");
 				addReady(newTask);
+				getWindow().chart.enqueueTask(newTask);
 			}
 		}
 	}
