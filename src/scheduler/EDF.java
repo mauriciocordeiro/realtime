@@ -32,6 +32,9 @@ public class EDF extends Scheduler {
 			Task nextTask = null;
 			
 			boolean isSchedulable = true;
+
+			System.out.println("============================================================");
+			System.out.println(getReadyQueue());
 			
 			int[] periods = new int[getTaskpool().size()];
 			for (int i=0; i<periods.length; i++) {
@@ -40,9 +43,6 @@ public class EDF extends Scheduler {
 			int clk = 0;
 			int endTime = br.org.mac.midgard.util.Math.lcm(periods);
 			currentTask = dequeue();
-			
-			System.out.println("============================================================");
-			System.out.println(getReadyQueue());
 			
 			while(clk <= endTime) {
 				Thread.sleep(1000);
