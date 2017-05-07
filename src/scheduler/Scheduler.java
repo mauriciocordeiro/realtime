@@ -1,5 +1,7 @@
 package scheduler;
 
+import scheduler.ui.MainWindow;
+
 public class Scheduler extends Thread {
 	
 	private TaskPool taskpool;
@@ -73,6 +75,14 @@ public class Scheduler extends Thread {
 
 	public void setWindow(MainWindow window) {
 		this.window = window;
+	}
+
+	public Activator getActivator() {
+		return activator;
+	}
+
+	public void setActivator(Activator activator) {
+		this.activator = activator;
 	}
 
 	public void addReady(Task task) {

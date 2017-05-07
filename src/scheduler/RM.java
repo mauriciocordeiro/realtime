@@ -2,6 +2,8 @@ package scheduler;
 
 import javax.swing.JOptionPane;
 
+import scheduler.ui.MainWindow;
+
 public class RM extends Scheduler {
 	
 	public RM(TaskPool taskpool, MainWindow window) {
@@ -108,6 +110,8 @@ public class RM extends Scheduler {
 			JOptionPane.showMessageDialog(getWindow(), "Conjunto de tarefas escalonável", "Informação", JOptionPane.INFORMATION_MESSAGE);
 		
 		System.out.println("result:\n"+taskline);
+		
+		getWindow().chart.addTasks(result);			
 		return result;
 		
 	}
@@ -135,7 +139,7 @@ public class RM extends Scheduler {
 		return newTask;
 	}
 	
-	public boolean isValidScale() {
+	public boolean isSchedulable() {
 		Long u = new Long(0);
 		for (Task tsk : getTaskpool()) {
 			u += tsk.getComputation()/tsk.getPeriod();

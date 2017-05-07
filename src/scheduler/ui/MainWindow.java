@@ -1,4 +1,4 @@
-package scheduler;
+package scheduler.ui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -24,17 +24,20 @@ import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.category.IntervalCategoryDataset;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.time.SimpleTimePeriod;
 
+import scheduler.RM;
+import scheduler.Task;
+import scheduler.TaskPool;
+
 public class MainWindow extends JFrame {
 	
 	public static final int TOTAL_TASKS = 5;
 	public static final long INTERVAL = 5000;
-	
-	public static Color[] colors = {Color.BLUE, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.GREEN};
 	
 	public TaskPool taskPool = new TaskPool();
 
@@ -44,7 +47,7 @@ public class MainWindow extends JFrame {
 	private JRadioButton rdbEdf;
 	private JRadioButton rdbLst;
 	
-	private ChartPanel ganttPanel;
+	public Chart chart;
 	
 	private String schedulerName;
 
@@ -166,13 +169,7 @@ public class MainWindow extends JFrame {
 		btnRandom.setBounds(538, 100, 46, 23);
 		contentPane.add(btnRandom);
 		
-//		JPanel graphicPanel = new JPanel();
-//		graphicPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-//		graphicPanel.setBackground(Color.WHITE);
-//		graphicPanel.setBounds(10, 191, 774, 269);
-//		contentPane.add(graphicPanel);
-		
-		//ganttPanel.setBounds(10, 191, 574, 265);
+		createChart();
 	}
 	
 	public void addTaskOnClick(ActionEvent e) {
@@ -197,8 +194,7 @@ public class MainWindow extends JFrame {
 	}
 	
 	public void btnRandomOnClick(ActionEvent e) {
-		if(taskPool.size()==TOTAL_TASKS)
-			taskPool = new TaskPool();
+		taskPool = new TaskPool();
 		
 		int size = taskPool.size();
 		for(int i=size; i<TOTAL_TASKS; i++) {
@@ -218,6 +214,7 @@ public class MainWindow extends JFrame {
 	}
 	
 	public void btnTestOnClick(ActionEvent e) {
+		createChart();
 		
 		if(taskPool.size()<1) {
 			JOptionPane.showMessageDialog(this, "Número insuficiente de tarefas.", "Alerta", JOptionPane.WARNING_MESSAGE);
@@ -233,8 +230,8 @@ public class MainWindow extends JFrame {
 			reloadTable();
 			
 			RM s = new RM(taskPool, this);
-			plot(s.schedule());
-//			s.schedule();
+//			plot(s.schedule());
+			s.schedule();
 			
 		} else if(rdbEdf.isSelected()) {
 			schedulerName = "Earliest Deadline First";
@@ -249,6 +246,18 @@ public class MainWindow extends JFrame {
 			return;
 		}
 		
+	}
+	
+	public void createChart() {
+		if(chart!=null)
+			contentPane.remove(chart);
+		contentPane.repaint();
+		
+		chart = new Chart();
+		chart.setBorder(new LineBorder(new Color(0, 0, 0)));
+		chart.setBackground(Color.WHITE);
+		chart.setBounds(10, 191, 774, 269);
+		contentPane.add(chart);
 	}
 	
 	public void plot(TaskPool tasks) {
@@ -277,6 +286,7 @@ public class MainWindow extends JFrame {
 			if(taskSeries!=null)
 				collection.add(taskSeries);
 		}
+		
 		
 		final JFreeChart chart = ChartFactory.createGanttChart(
 	            null,  // chart title
@@ -314,16 +324,4 @@ public class MainWindow extends JFrame {
 			}			
 		}
 	}
-	
-	public static IntervalCategoryDataset createDataset() {
-
-        final TaskSeries s1 = new TaskSeries("Scheduled");
-        s1.add(new org.jfree.data.gantt.Task("Write Proposal",
-               new SimpleTimePeriod(0,0)));
-
-        final TaskSeriesCollection collection = new TaskSeriesCollection();
-        collection.add(s1);
-
-        return collection;
-    }
 }

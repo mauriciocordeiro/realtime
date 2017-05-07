@@ -1,4 +1,4 @@
-package scheduler;
+package scheduler.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +11,10 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
+
+import scheduler.Task;
+import scheduler.TaskPool;
+
 import javax.swing.SwingConstants;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.Window.Type;

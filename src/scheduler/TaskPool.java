@@ -43,6 +43,54 @@ public class TaskPool extends ArrayList<Task> {
 		return task;
 	}
 	
+	public Task removeLowestDeadline() {
+		Task task = null;
+		if(size()==0)
+			return task;
+		
+		task = remove(0);
+		for (Task t : this) {
+			if(task.compareDeadlineTo(t)<=0) {
+				task = t;
+			}
+		}
+		
+		remove(task);
+		return task;
+	}
+	
+	public Task removeLowestRelativeDeadline() {
+		Task task = null;
+		if(size()==0)
+			return task;
+		
+		task = remove(0);
+		for (Task t : this) {
+			if(task.compareRelativeDeadlineTo(t)<=0) {
+				task = t;
+			}
+		}
+		
+		remove(task);
+		return task;
+	}
+	
+	public Task removeLowestComputation() {
+		Task task = null;
+		if(size()==0)
+			return task;
+		
+		task = remove(0);
+		for (Task t : this) {
+			if(task.compareComputationTo(t)<=0) {
+				task = t;
+			}
+		}
+		
+		remove(task);
+		return task;
+	}
+	
 	public Task dequeue() {
 		if(size()>0)
 			return remove(0);

@@ -87,6 +87,30 @@ public class Task extends Thread implements Comparable<Task> {
 		return 0;
 	}
 	
+	public int compareDeadlineTo(Task o) {
+		if(this.deadline < o.deadline)
+			return -1;
+		if(this.deadline > o.deadline)
+			return 1;
+		return 0;
+	}
+	
+	public int compareComputationTo(Task o) {
+		if(this.computation < o.computation)
+			return -1;
+		if(this.computation > o.computation)
+			return 1;
+		return 0;
+	}
+	
+	public int compareRelativeDeadlineTo(Task o) {
+		if(this.relativeDeadline < o.relativeDeadline)
+			return -1;
+		if(this.relativeDeadline > o.relativeDeadline)
+			return 1;
+		return 0;
+	}
+	
 	@Override
 	public String toString() {
 		return "[id:"+getTaskId()+", period:"+getPeriod()+", computation:"+getComputation()+

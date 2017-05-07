@@ -1,5 +1,7 @@
 package scheduler;
 
+import scheduler.ui.MainWindow;
+
 public class LST extends Thread {
 	
 	private TaskPool taskpool;
