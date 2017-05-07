@@ -32,9 +32,9 @@ public class TaskPool extends ArrayList<Task> {
 		if(size()==0)
 			return task;
 		
-		task = remove(0);
+		task = get(0);
 		for (Task t : this) {
-			if(task.compareTo(t)<=0) {
+			if(t.compareTo(task)<=0) {
 				task = t;
 			}
 		}
@@ -48,9 +48,9 @@ public class TaskPool extends ArrayList<Task> {
 		if(size()==0)
 			return task;
 		
-		task = remove(0);
+		task = get(0);
 		for (Task t : this) {
-			if(task.compareDeadlineTo(t)<=0) {
+			if(t.compareDeadlineTo(task)<=0) {
 				task = t;
 			}
 		}
@@ -64,9 +64,9 @@ public class TaskPool extends ArrayList<Task> {
 		if(size()==0)
 			return task;
 		
-		task = remove(0);
+		task = get(0);
 		for (Task t : this) {
-			if(task.compareRelativeDeadlineTo(t)<=0) {
+			if(t.compareRelativeDeadlineTo(task)<=0) {
 				task = t;
 			}
 		}
@@ -80,9 +80,25 @@ public class TaskPool extends ArrayList<Task> {
 		if(size()==0)
 			return task;
 		
-		task = remove(0);
+		task = get(0);
 		for (Task t : this) {
-			if(task.compareComputationTo(t)<=0) {
+			if(t.compareComputationTo(task)<=0) {
+				task = t;
+			}
+		}
+		
+		remove(task);
+		return task;
+	}
+	
+	public Task removeLowestSlackTime(int clk) {
+		Task task = null;
+		if(size()==0)
+			return task;
+		
+		task = get(0);
+		for (Task t : this) {
+			if(t.compareSlackTimeTo(task, clk)<=0) {
 				task = t;
 			}
 		}

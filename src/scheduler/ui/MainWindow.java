@@ -30,6 +30,8 @@ import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.time.SimpleTimePeriod;
 
+import scheduler.EDF;
+import scheduler.LST;
 import scheduler.RM;
 import scheduler.Task;
 import scheduler.TaskPool;
@@ -229,17 +231,27 @@ public class MainWindow extends JFrame {
 				task.setDeadline(task.getPeriod());
 			reloadTable();
 			
-			RM s = new RM(taskPool, this);
+			RM rm = new RM(taskPool, this);
+			rm.start();
 //			plot(s.schedule());
-			s.schedule();
+			//s.schedule();
 			
 		} else if(rdbEdf.isSelected()) {
 			schedulerName = "Earliest Deadline First";
 			
+			JOptionPane.showMessageDialog(this, "No escalonamento EDF, o deadline é igual ao período.", "Info", JOptionPane.INFORMATION_MESSAGE);
+			for (Task task : taskPool)
+				task.setDeadline(task.getPeriod());
+			reloadTable();
+			
+			EDF edf = new EDF(taskPool, this);
+			edf.start();
 			
 		} else if(rdbLst.isSelected()) {
 			schedulerName = "LST";
 			
+			LST lst = new LST(taskPool, this);
+			lst.start();
 			
 		} else {
 			JOptionPane.showMessageDialog(this, "Nenhuma escalonador selecionado.", "Alerta", JOptionPane.WARNING_MESSAGE);

@@ -12,7 +12,7 @@ import scheduler.TaskPool;
 public class Chart extends JPanel {
 	
 	private final int MARGIN = 10;
-	private static final int SIZE = 20;
+	private static final int SIZE = 10;
 	public static final Color[] colors = {Color.YELLOW, Color.RED, Color.MAGENTA, Color.CYAN, Color.GREEN};
 	
 	private int pointer;
@@ -21,6 +21,7 @@ public class Chart extends JPanel {
 	public Chart() {
 		pointer = MARGIN;
 		
+		//chart label
 		int x = 10;
 		for (int i=0; i<colors.length; i++) {
 			JPanel p = new JPanel();
@@ -47,6 +48,17 @@ public class Chart extends JPanel {
 			pointer += SIZE;
 			add(t);
 		}
+		
+		repaint();
+	}
+	
+	public void addTask(Task task) {
+		JPanel t = new JPanel();
+		t.setBorder(new LineBorder(new Color(0, 0, 0)));
+		t.setBackground(colors[task.getTaskId()]);
+		t.setBounds(pointer, getY(), SIZE, SIZE);
+		pointer += SIZE;
+		add(t);
 		
 		repaint();
 	}

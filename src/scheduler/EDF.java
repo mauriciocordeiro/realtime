@@ -6,9 +6,6 @@ import scheduler.ui.MainWindow;
 
 public class EDF extends Scheduler {
 	
-	private TaskPool taskpool;
-	private MainWindow window;
-	
 	public EDF(TaskPool taskpool, MainWindow window) {
 		super(taskpool, window, false);
 		
@@ -48,6 +45,12 @@ public class EDF extends Scheduler {
 			System.out.println(getReadyQueue());
 			
 			while(clk <= endTime) {
+				Thread.sleep(1000);
+				
+				if(!validateDeadlines(clk)) {
+					isSchedulable = false;
+					break;
+				}
 				
 				clk++;
 				startNewTask(clk);
@@ -55,6 +58,7 @@ public class EDF extends Scheduler {
 				
 				result.add(currentTask);
 				taskline += currentTask.getTaskId() + "|";
+				getWindow().chart.addTask(currentTask);
 				
 				//skip if there isn't a new task
 				if(nextTask==null)
@@ -69,24 +73,26 @@ public class EDF extends Scheduler {
 				
 				if(currentTask.compareRelativeDeadlineTo(nextTask)<=0) { //current has priority over next
 					System.out.println("clk: "+clk+" -> "+currentTask.getTaskId()+" HAS PRIORITY OVER "+nextTask.getTaskId());
+					if(currentTask.getRelativeDeadline() == clk) { //current hits deadline
+						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
+						isSchedulable = false;
+						break;
+					}
 					continue;
 				}
 				else { //next has priority over current
 					System.out.println("clk: "+clk+" -> "+nextTask.getTaskId()+" HAS PRIORITY OVER "+currentTask.getTaskId());
-					if(currentTask.getRelativeDeadline() == clk) { //current hits deadline
+					if(currentTask.getRelativeDeadline() < clk) { //current hits deadline
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
-						currentTask.interrupt();
 						isSchedulable = false;
 						break;
 					}
-					else if(currentTask.getRelativeDeadline() < clk) { 
+					else if(currentTask.getRelativeDeadline() >= clk) { 
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HAS BEEN PREEMPTED");
-						currentTask.wait();
 						enqueue(currentTask);
 					}
 					
 					currentTask = nextTask; // new is the new current
-					currentTask.notify();
 				}
 			}
 			
@@ -97,11 +103,8 @@ public class EDF extends Scheduler {
 			
 			System.out.println("result:\n"+taskline);
 			
-			getWindow().plot(result);
 			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		} catch (Exception e) { }
 	}
 	
 	public boolean isSchedulable() {

@@ -102,5 +102,17 @@ public class Scheduler extends Thread {
 	public void run() {
 		
 	}
+	
+	public boolean validateDeadlines(int clk) {
+		boolean isValid = true;
+		for (Task task : readyQueue) {
+			if(clk >= task.getRelativeDeadline().intValue()) {
+				isValid = false;
+				System.err.println("\t"+"clk: "+clk+" -> "+task.getTaskId()+" HITS DEADLINE");
+				break;
+			}
+		}
+		return isValid;
+	}
 
 }

@@ -63,6 +63,10 @@ public class Task extends Thread implements Comparable<Task> {
 	public void setRelativeDeadline(Long relativeDeadline) {
 		this.relativeDeadline = relativeDeadline;
 	}
+	
+	public int getSlackTime(int clk) {
+		return (deadline.intValue()-clk)-computation.intValue();
+	}
 
 	@Override
 	public void run() {
@@ -107,6 +111,14 @@ public class Task extends Thread implements Comparable<Task> {
 		if(this.relativeDeadline < o.relativeDeadline)
 			return -1;
 		if(this.relativeDeadline > o.relativeDeadline)
+			return 1;
+		return 0;
+	}
+	
+	public int compareSlackTimeTo(Task o, int clk) {
+		if(this.getSlackTime(clk) < o.getSlackTime(clk))
+			return -1;
+		if(this.getSlackTime(clk) > o.getSlackTime(clk))
 			return 1;
 		return 0;
 	}
