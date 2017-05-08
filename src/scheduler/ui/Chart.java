@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 
 import scheduler.Task;
@@ -13,10 +14,9 @@ public class Chart extends JPanel {
 	
 	private final int MARGIN = 10;
 	private static final int SIZE = 10;
-	public static final Color[] colors = {Color.YELLOW, Color.RED, Color.MAGENTA, Color.CYAN, Color.GREEN};
+	public static final Color[] colors = {Color.YELLOW, Color.CYAN, Color.RED, Color.GREEN, Color.MAGENTA};
 	
 	private int pointer;
-	
 	
 	public Chart() {
 		pointer = MARGIN;
@@ -84,7 +84,7 @@ public class Chart extends JPanel {
 		t.setBounds(pointer-1, getY(), 1, SIZE*2);
 		
 		JLabel l = new JLabel(task.getTaskId()+"");
-		l.setBounds(pointer, getY()+(SIZE*2), 14, 14);
+		l.setBounds(pointer-3, getY()+(SIZE*2), 14, 14);
 		
 		add(t);
 		add(l);

@@ -35,6 +35,7 @@ import scheduler.LST;
 import scheduler.RM;
 import scheduler.Task;
 import scheduler.TaskPool;
+import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame {
 	
@@ -75,9 +76,6 @@ public class MainWindow extends JFrame {
 	 */
 	@SuppressWarnings("serial")
 	public MainWindow() {
-		
-		
-		
 		setTitle("Scheduler");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -233,8 +231,6 @@ public class MainWindow extends JFrame {
 			
 			RM rm = new RM(taskPool, this);
 			rm.start();
-//			plot(s.schedule());
-			//s.schedule();
 			
 		} else if(rdbEdf.isSelected()) {
 			schedulerName = "Earliest Deadline First";
@@ -270,52 +266,6 @@ public class MainWindow extends JFrame {
 		chart.setBackground(Color.WHITE);
 		chart.setBounds(10, 191, 774, 269);
 		contentPane.add(chart);
-	}
-	
-	public void plot(TaskPool tasks) {
-		String timeline = "";
-		
-		TaskSeriesCollection collection = new TaskSeriesCollection();
-		TaskSeries[] series = new TaskSeries[TOTAL_TASKS];
-		
-		long start = 0;
-		long end = INTERVAL;
-		
-		for (Task task : tasks) {
-			series[task.getTaskId()] = new TaskSeries(task.getTaskId().toString());
-			timeline += task.getTaskId();
-		}
-		
-		for (Task task : tasks) {
-			
-			series[task.getTaskId()].add(new org.jfree.data.gantt.Task(task.getTaskId().toString(),
-	               new SimpleTimePeriod(start, end)));
-	        start+=INTERVAL;
-	        end+=INTERVAL;
-		}
-		
-		for (TaskSeries taskSeries : series) {
-			if(taskSeries!=null)
-				collection.add(taskSeries);
-		}
-		
-		
-		final JFreeChart chart = ChartFactory.createGanttChart(
-	            null,  // chart title
-	            "Tasks",              // domain axis label
-	            "Period",              // range axis label
-	            (IntervalCategoryDataset)collection,             // data
-	            true,                // include legend
-	            true,                // tooltips
-	            false                // urls
-	        );
-
-        // add the chart to a panel...
-        final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBounds(10, 191, 774, 269);
-        setContentPane(chartPanel);
-		
-        JOptionPane.showMessageDialog(null, timeline, "Shedule", JOptionPane.PLAIN_MESSAGE);
 	}
 		
 	public void reloadTable() {
