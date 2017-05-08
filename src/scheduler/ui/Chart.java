@@ -72,8 +72,6 @@ public class Chart extends JPanel {
 		JLabel l = new JLabel(task.getTaskId()+"");
 		l.setBounds(pointer, getY()-(SIZE*2)-7, 14, 14);
 		
-		pointer++;
-		
 		add(t);
 		add(l);
 		repaint();
@@ -83,12 +81,10 @@ public class Chart extends JPanel {
 		
 		JPanel t = new JPanel();
 		t.setBorder(new LineBorder(new Color(0, 0, 255)));
-		t.setBounds(pointer-1, getY()+(SIZE*2), 1, SIZE*2);
+		t.setBounds(pointer-1, getY(), 1, SIZE*2);
 		
 		JLabel l = new JLabel(task.getTaskId()+"");
-		l.setBounds(pointer, getY()+(SIZE*2)+7, 14, 14);
-		
-		pointer++;
+		l.setBounds(pointer, getY()+(SIZE*2), 14, 14);
 		
 		add(t);
 		add(l);

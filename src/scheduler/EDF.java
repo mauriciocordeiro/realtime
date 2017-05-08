@@ -76,6 +76,7 @@ public class EDF extends Scheduler {
 					if(currentTask.getRelativeDeadline() == clk) { //current hits deadline
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
 						isSchedulable = false;
+						getWindow().chart.addDeadline(currentTask);
 						break;
 					}
 					continue;
@@ -85,6 +86,7 @@ public class EDF extends Scheduler {
 					if(currentTask.getRelativeDeadline() < clk) { //current hits deadline
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
 						isSchedulable = false;
+						getWindow().chart.addDeadline(currentTask);
 						break;
 					}
 					else if(currentTask.getRelativeDeadline() >= clk) { 

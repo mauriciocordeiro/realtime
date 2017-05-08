@@ -78,6 +78,7 @@ public class LST extends Scheduler {
 					if(currentTask.getRelativeDeadline().intValue() < clk) { //current hits deadline
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE ("+currentTask.getRelativeDeadline()+")");
 						isSchedulable = false;
+						getWindow().chart.addDeadline(currentTask);
 						break;
 					}
 					continue;
@@ -87,6 +88,7 @@ public class LST extends Scheduler {
 					if(currentTask.getRelativeDeadline().intValue() < clk) { //current hits deadline
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
 						isSchedulable = false;
+						getWindow().chart.addDeadline(currentTask);
 						break;
 					}
 					else if(currentTask.getRelativeDeadline().intValue() >= clk) { 
