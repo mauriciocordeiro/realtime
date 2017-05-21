@@ -43,6 +43,10 @@ public class EDF extends Scheduler {
 			int clk = 0;
 			int endTime = br.org.mac.midgard.util.Math.lcm(periods);
 			currentTask = dequeue();
+			result.add(currentTask);
+			System.out.println("clk: "+clk+" -> "+(currentTask==null?"_":currentTask.getTaskId())+" RUNNING");
+			getWindow().chart.addTask(currentTask);
+			taskline += (currentTask==null?"_":currentTask.getTaskId()) + "|";
 			
 			while(clk <= endTime) {
 				Thread.sleep(100);
