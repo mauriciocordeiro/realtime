@@ -44,25 +44,31 @@ public class LST extends Scheduler {
 			currentTask = dequeue(clk);
 			
 			while(clk <= endTime) {
-				Thread.sleep(1000);
+				Thread.sleep(100);
+				clk++;
+				startNewTask(clk);
+				
+//				System.err.println("\tReady ["+clk+"]: "+getReadyQueue());
 				
 				if(!validateDeadlines(clk)) {
 					isSchedulable = false;
 					break;
 				}
-
-				result.add(currentTask);
-				System.out.println("clk: "+clk+" -> "+currentTask.getTaskId()+" RUNNING");
-				getWindow().chart.addTask(currentTask);
-				taskline += currentTask.getTaskId() + "|";
 				
-				clk++;
-				startNewTask(clk);
+				if(currentTask==null)
+					currentTask = dequeue(clk);
+				
+//				System.err.println("\tcurrentTask: "+currentTask);
+				
+				result.add(currentTask);
+				System.out.println("clk: "+clk+" -> "+(currentTask==null?"_":currentTask.getTaskId())+" RUNNING");
+				getWindow().chart.addTask(currentTask);
+				taskline += (currentTask==null?"_":currentTask.getTaskId()) + "|";
 
 				nextTask = dequeue(clk);
 				
 				//skip if there isn't a new task
-				if(nextTask==null)
+				if(currentTask==null)
 					continue;
 				
 				currentTask.setComputation(currentTask.getComputation()-1);
@@ -72,10 +78,11 @@ public class LST extends Scheduler {
 					continue;
 				}
 				
-				if(currentTask.compareTo(nextTask)<=0) { //current has priority over next
+				
+				if(nextTask!=null && currentTask.compareTo(nextTask)<=0) { //current has priority over next
 					System.out.println("clk: "+clk+" -> "+currentTask.getTaskId()+" HAS PRIORITY OVER "+nextTask.getTaskId());
 					enqueue(nextTask);
-					if(currentTask.getRelativeDeadline().intValue() < clk) { //current hits deadline
+					if(clk > currentTask.getRelativeDeadline().intValue()) { //current hits deadline
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE ("+currentTask.getRelativeDeadline()+")");
 						isSchedulable = false;
 						getWindow().chart.addDeadline(currentTask);
@@ -83,15 +90,15 @@ public class LST extends Scheduler {
 					}
 					continue;
 				}
-				else { //next has priority over current
+				else if(nextTask!=null) { //next has priority over current
 					System.out.println("clk: "+clk+" -> "+nextTask.getTaskId()+" HAS PRIORITY OVER "+currentTask.getTaskId());
-					if(currentTask.getRelativeDeadline().intValue() < clk) { //current hits deadline
-						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
+					if(clk > currentTask.getRelativeDeadline().intValue()) { //current hits deadline
+						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE ["+currentTask.getComputation()+"]");
 						isSchedulable = false;
 						getWindow().chart.addDeadline(currentTask);
 						break;
 					}
-					else if(currentTask.getRelativeDeadline().intValue() >= clk) { 
+					else if(clk < currentTask.getRelativeDeadline().intValue()) { 
 						System.out.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HAS BEEN PREEMPTED");
 						enqueue(currentTask);
 					}

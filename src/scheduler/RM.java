@@ -44,25 +44,31 @@ public class RM extends Scheduler {
 			currentTask = dequeue();
 			
 			while(clk <= endTime) {
-				Thread.sleep(1000);
+				Thread.sleep(100);
+				clk++;
+				startNewTask(clk);
+				
+//				System.err.println("\tReady ["+clk+"]: "+getReadyQueue());
 				
 				if(!validateDeadlines(clk)) {
 					isSchedulable = false;
 					break;
 				}
 				
-				result.add(currentTask);
-				System.out.println("clk: "+clk+" -> "+currentTask.getTaskId()+" RUNNING");
-				getWindow().chart.addTask(currentTask);
-				taskline += currentTask.getTaskId() + "|";
+				if(currentTask==null)
+					currentTask = dequeue();
 				
-				clk++;
-				startNewTask(clk);
+//				System.err.println("\tcurrentTask: "+currentTask);
+				
+				result.add(currentTask);
+				System.out.println("clk: "+clk+" -> "+(currentTask==null?"_":currentTask.getTaskId())+" RUNNING");
+				getWindow().chart.addTask(currentTask);
+				taskline += (currentTask==null?"_":currentTask.getTaskId()) + "|";
 
 				nextTask = dequeue();
 				
 				//skip if there isn't a new task
-				if(nextTask==null)
+				if(currentTask==null)
 					continue;
 				
 				currentTask.setComputation(currentTask.getComputation()-1);
@@ -72,10 +78,11 @@ public class RM extends Scheduler {
 					continue;
 				}
 				
-				if(currentTask.compareTo(nextTask)<=0) { //current has priority over next
+				
+				if(nextTask!=null && currentTask.compareTo(nextTask)<=0) { //current has priority over next
 					System.out.println("clk: "+clk+" -> "+currentTask.getTaskId()+" HAS PRIORITY OVER "+nextTask.getTaskId());
 					enqueue(nextTask);
-					if(clk >= currentTask.getRelativeDeadline().intValue()) { //current hits deadline
+					if(clk > currentTask.getRelativeDeadline().intValue()) { //current hits deadline
 						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE ("+currentTask.getRelativeDeadline()+")");
 						isSchedulable = false;
 						getWindow().chart.addDeadline(currentTask);
@@ -83,10 +90,10 @@ public class RM extends Scheduler {
 					}
 					continue;
 				}
-				else { //next has priority over current
+				else if(nextTask!=null) { //next has priority over current
 					System.out.println("clk: "+clk+" -> "+nextTask.getTaskId()+" HAS PRIORITY OVER "+currentTask.getTaskId());
-					if(clk >= currentTask.getRelativeDeadline().intValue()) { //current hits deadline
-						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE");
+					if(clk > currentTask.getRelativeDeadline().intValue()) { //current hits deadline
+						System.err.println("\t"+"clk: "+clk+" -> "+currentTask.getTaskId()+" HITS DEADLINE ["+currentTask.getComputation()+"]");
 						isSchedulable = false;
 						getWindow().chart.addDeadline(currentTask);
 						break;
@@ -108,6 +115,7 @@ public class RM extends Scheduler {
 			System.out.println("result:\n"+taskline);
 			
 		} catch (Exception e) {
+			System.out.println("\t\t\t\t\t"+e.getMessage());
 		}
 	}
 	

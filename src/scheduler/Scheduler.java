@@ -104,16 +104,14 @@ public class Scheduler extends Thread {
 	}
 	
 	public boolean validateDeadlines(int clk) {
-		boolean isValid = true;
 		for (Task task : readyQueue) {
-			if(clk >= task.getRelativeDeadline().intValue()) {
-				isValid = false;
-				System.err.println("\t"+"clk: "+clk+" -> "+task.getTaskId()+" HITS DEADLINE");
+			if(clk > task.getRelativeDeadline().intValue()) {
+				System.err.println("\t"+"clk: "+clk+" -> "+task.getTaskId()+" HITS DEADLINE ["+task.getComputation()+"] \\o/");
 				window.chart.addDeadline(task);
-				break;
+				return false;
 			}
 		}
-		return isValid;
+		return true;
 	}
 
 }

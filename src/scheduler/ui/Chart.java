@@ -55,8 +55,11 @@ public class Chart extends JPanel {
 	
 	public void addTask(Task task) {
 		JPanel t = new JPanel();
-		t.setBorder(new LineBorder(new Color(0, 0, 0)));
-		t.setBackground(colors[task.getTaskId()]);
+		if(task==null)
+			t.setBorder(new LineBorder(new Color(220,220,220)));
+		else
+			t.setBorder(new LineBorder(new Color(0, 0, 0)));
+		t.setBackground(task==null ? Color.WHITE : colors[task.getTaskId()]);
 		t.setBounds(pointer, getY(), SIZE, SIZE);
 		pointer += SIZE;
 		add(t);

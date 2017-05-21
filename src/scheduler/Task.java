@@ -65,7 +65,8 @@ public class Task extends Thread implements Comparable<Task> {
 	}
 	
 	public int getSlackTime(int clk) {
-		return (relativeDeadline.intValue()-clk)-computation.intValue();
+//		return (relativeDeadline.intValue()-clk)-computation.intValue();
+		return deadline.intValue() - computation.intValue();
 	}
 
 	@Override
