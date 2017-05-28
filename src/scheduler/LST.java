@@ -43,9 +43,9 @@ public class LST extends Scheduler {
 			int endTime = br.org.mac.midgard.util.Math.lcm(periods);
 			currentTask = dequeue(clk);
 			result.add(currentTask);
-			System.out.println("clk: "+clk+" -> "+(currentTask==null?"_":currentTask.getTaskId())+" RUNNING");
-			getWindow().chart.addTask(currentTask);
-			taskline += (currentTask==null?"_":currentTask.getTaskId()) + "|";
+//			System.out.println("clk: "+clk+" -> "+(currentTask==null?"_":currentTask.getTaskId())+" RUNNING");
+//			getWindow().chart.addTask(currentTask);
+//			taskline += (currentTask==null?"_":currentTask.getTaskId()) + "|";
 			
 			while(clk <= endTime) {
 				Thread.sleep(100);
