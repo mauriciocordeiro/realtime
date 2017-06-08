@@ -6,7 +6,7 @@ import scheduler.ui.MainWindow;
 
 public class RM extends Scheduler {
 	
-	public RM(TaskPool taskpool, MainWindow window) {
+	public RM (TaskPool taskpool, MainWindow window) {
 		super(taskpool, window, false);
 		
 		for (Task task : taskpool) {
@@ -24,6 +24,11 @@ public class RM extends Scheduler {
 	public void run() {
 		
 		try {
+			
+//			if(!isSchedulable()) {
+//				JOptionPane.showMessageDialog(getWindow(), "Conjunto de tarefas não escalonável", "Alerta: análise de escalonabilidade", JOptionPane.WARNING_MESSAGE);
+////				return;
+//			}
 			
 			TaskPool result = new TaskPool();
 			String taskline = "";
@@ -136,12 +141,12 @@ public class RM extends Scheduler {
 	}
 	
 	public boolean isSchedulable() {
-		Long u = new Long(0);
+		Double u = new Double(0);
 		for (Task tsk : getTaskpool()) {
-			u += tsk.getComputation()/tsk.getPeriod();
+			u += (tsk.getComputation().doubleValue()/tsk.getPeriod().doubleValue());
 		}
 		
-		Long n = new Long(getTaskpool().size());
+		Double n = new Double(getTaskpool().size());
 		
 		if(u>(n*((Math.pow(2, (1/n)))-1))) {
 			return false;

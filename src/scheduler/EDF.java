@@ -25,6 +25,11 @@ public class EDF extends Scheduler {
 		
 		try {
 			
+//			if(!isSchedulable()) {
+//				JOptionPane.showMessageDialog(getWindow(), "Conjunto de tarefas não escalonável", "Alerta: análise de escalonabilidade", JOptionPane.WARNING_MESSAGE);
+////				return;
+//			}
+			
 			TaskPool result = new TaskPool();
 			String taskline = "";
 			
@@ -124,12 +129,12 @@ public class EDF extends Scheduler {
 	}
 	
 	public boolean isSchedulable() {
-		Long u = new Long(0);
+		Double u = new Double(0);
 		for (Task tsk : getTaskpool()) {
-			u += tsk.getComputation()/tsk.getPeriod();
+			u += (tsk.getComputation().doubleValue()/tsk.getPeriod().doubleValue());
 		}
 		
-		return u<=1;
+		return u<=1.0;
 	}
 	
 	private void startNewTask(int clk) {
